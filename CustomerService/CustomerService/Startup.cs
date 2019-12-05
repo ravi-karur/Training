@@ -9,6 +9,9 @@ using Microsoft.OpenApi.Models;
 using CustomerApi.Data;
 using CustomerApi.Data.Interfaces;
 using CustomerApi.Data.Repositories;
+using Newtonsoft.Json;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
+
 
 namespace CustomerService
 {
@@ -24,7 +27,8 @@ namespace CustomerService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddControllers().AddNewtonsoftJson();
+                
             
             //services.AddScoped<ICustomerMapProfile,CustomerMapProfile>();
             services.AddMediatR();
@@ -32,11 +36,13 @@ namespace CustomerService
             services.AddCustomerServicesDependencies();
             services.AddCustomerDataDependencies(Configuration);
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddMvc();
 
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Customer API", Version = "v1" });
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

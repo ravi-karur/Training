@@ -4,6 +4,7 @@ using CustomerApi.Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,7 +18,9 @@ namespace CustomerApi.Data.Repositories
 
         public async Task<bool> EmailExistAsync(string email)
         {
-            return await ModelDbSets.AsNoTracking().AnyAsync(e => e.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase));
+            //return await ModelDbSets.AsNoTracking().Where(e => e.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)).AnyAsync();
+
+            return await ModelDbSets.AsNoTracking().AnyAsync(e => e.Email.Equals(email));
 
         }
     }
