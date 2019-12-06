@@ -6,15 +6,20 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-buster AS build
 WORKDIR /src
 COPY CustomerService.sln ./
-COPY /src/Customer.API/Customer.API.csproj ./Customer.API/
-COPY /src/Customer.Service/Customer.Service.csproj ./Customer.Service/
-COPY /src/Customer.Data/Customer.Data.csproj ./Customer.Data/
-COPY /src/Customer.Domain/Customer.Domain.csproj ./Customer.Domain/
+COPY Src/Customer.API/Customer.API.csproj ./Src/Customer.API/
+COPY Src/Customer.Service/Customer.Service.csproj ./Src/Customer.Service/
+COPY Src/Customer.Data/Customer.Data.csproj ./Src/Customer.Data/
+COPY Src/Customer.Domain/Customer.Domain.csproj ./Src/Customer.Domain/
 
-RUN dotnet restore
+COPY Tests/Customer.Domain.UnitTests/Customer.Domain.UnitTests.csproj ./Tests/Customer.Domain.UnitTests/
+COPY Tests/Customer.Service.UnitTests/Customer.Service.UnitTests.csproj ./Tests/Customer.Service.UnitTests/
+COPY Tests/Customer.API.Tests/Customer.API.Tests.csproj ./Tests/Customer.API.Tests/
+#COPY docker-compose.dcproj ./
+
+RUN dotnet restore 
 COPY . .
 
-WORKDIR "/src/Customer.API"
+WORKDIR "/src"
 RUN dotnet build -c Release -o /app/build
 
 FROM build AS publish
