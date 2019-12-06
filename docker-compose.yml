@@ -16,4 +16,4 @@ services:
     image: ${DOCKER_REGISTRY-}customerservice
     build:
       context: .
-      dockerfile: Src/CustomerService/Dockerfile
+      dockerfile: Dockerfile
