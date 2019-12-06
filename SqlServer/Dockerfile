@@ -8,13 +8,17 @@ ENV PATH=${PATH}:/opt/mssql/bin
 RUN mkdir -p /var/opt/mssql/data
 RUN chmod -R g=u /var/opt/mssql /etc/passwd
 
-COPY . /
+WORKDIR /var/opt/mssql/data
+
+COPY ./SqlServer .
+
+RUN chmod 767 /var/opt/mssql/data/entrypoint.sh
 
 
 #COPY CreateCustomerDB.sql /var/opt/mssql/data
 
 
-ENTRYPOINT [ "/bin/bash", "entrypoint.sh" ]
+ENTRYPOINT [ "/bin/bash", "/var/opt/mssql/data/entrypoint.sh" ]
 CMD [ "/opt/mssql/bin/sqlservr" ]
 
 # RUN /opt/mssql/bin/sqlservr --accept-eula & sleep 10 \
