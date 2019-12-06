@@ -6,16 +6,16 @@ namespace CustomerApi.Domain.Models
 {
     public class Account : ModelBase
     {
-        public Guid Id { get; set; }
+        public Guid CustomerId { get; set; }
         
         public string Email { get; set; }
         public long AccountNo { get; set; }
         public bool Active { get; set; }
 
-        public Account(string email, Guid id)
+        public Account(string email, Guid customerId)
         {
             Email = email;
-            Id = id;
+            CustomerId = customerId;
         }
 
         

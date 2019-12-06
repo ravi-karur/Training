@@ -10,6 +10,6 @@ namespace CustomerApi.Data.Interfaces
     {
         Task<bool> EmailExistAsync(string email);
 
-        public Customer GetCustomer(string email);
+        public Customer GetCustomerByEmail(string email);
     }
 }

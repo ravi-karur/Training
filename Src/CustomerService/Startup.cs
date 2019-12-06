@@ -34,6 +34,7 @@ namespace CustomerService
             services.AddCustomerServicesDependencies();
             services.AddCustomerDataDependencies(Configuration);
             services.AddScoped<ICustomerRepository, CustomerRepository>();
+            services.AddScoped<IAccountRepository, AccountRepository>();
             services.AddMvc();
 
             services.AddSwaggerGen(c =>

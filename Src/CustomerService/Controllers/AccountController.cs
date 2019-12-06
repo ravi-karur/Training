@@ -15,12 +15,12 @@ namespace CustomerService.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    public class CustomerController : ApiControllerBase
+    public class AccountController : ApiControllerBase
     {
-        private readonly ILogger<CustomerController> _logger;
+        private readonly ILogger<AccountController> _logger;
         
 
-        public CustomerController(ILogger<CustomerController> logger,IMediator mediator) : base(mediator)
+        public AccountController(ILogger<AccountController> logger,IMediator mediator) : base(mediator)
         {
             _logger = logger;            
         }
@@ -41,19 +41,19 @@ namespace CustomerService.Controllers
             return Ok(customerResults);
         }
 
-        /// <summary>
-        /// Get Customer by id
-        /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        [ProducesResponseType(typeof(CustomerDto),StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CustomerDto>> GetCustomerAsync(Guid id)
-        {
-            return Single(await QueryAsync(new GetCustomerQuery(id)));            
-        }
+        ///// <summary>
+        ///// Get Customer by id
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <returns></returns>
+        //[HttpGet("{id}")]
+        //[ProducesResponseType(typeof(CustomerDto),StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status404NotFound)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //public async Task<ActionResult<CustomerDto>> GetCustomerAsync(Guid id)
+        //{
+        //    return Single(await QueryAsync(new GetCustomerQuery(id)));            
+        //}
 
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace CustomerService.Controllers
         /// <param name="command">Info of customer</param>
         /// <returns></returns>
         [HttpPost]        
-        public async Task<ActionResult> CreateCustomerAsync([FromBody] CreateCustomerCommand command)
+        public async Task<ActionResult> CreateAccountAsync([FromBody] CreateAccountCommand command)
         {
             return Ok(await CommandAsync(command));
         }

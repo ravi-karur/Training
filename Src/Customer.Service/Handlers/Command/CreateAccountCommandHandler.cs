@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,27 +17,29 @@ namespace CustomerApi.Service.Handlers.Command
 {
     public class CreateAccountCommandHandler : IRequestHandler<CreateAccountCommand, AccountDto>
     {
-        private readonly ICustomerDbContext _customerDbContext;
-        private readonly IMapper _customerMap;
+        private readonly IAccountRepository _accountRepository;
+        private readonly ICustomerRepository _customerRepository;
+        private readonly IMapper _accountMap;
         private readonly ILogger _logger;
 
-        public CreateAccountCommandHandler(ILogger<CreateAccountCommandHandler> logger, IMapper customerMap, ICustomerDbContext customerDbContext)
+        public CreateAccountCommandHandler(ILogger<CreateAccountCommandHandler> logger, IMapper accountMap, IAccountRepository accountRepository, ICustomerRepository customerRepository)
         {
             _logger = logger;
-            _customerMap = customerMap;
-            _customerDbContext = customerDbContext ?? throw new ArgumentNullException(nameof(customerDbContext));
+            _accountMap = accountMap;
+            _accountRepository = accountRepository ?? throw new ArgumentNullException(nameof(accountRepository));
+            _customerRepository = customerRepository ?? throw new ArgumentNullException(nameof(customerRepository));
         }
         public async Task<AccountDto> Handle(CreateAccountCommand request, CancellationToken cancellationToken)
         {
             try
             {
-                var customerDetail = await _customerDbContext.Customers.FindAsync(request.Email);
+                Customer customerDetail = _customerRepository.GetCustomerByEmail(request.Email);
 
                 if (customerDetail != null)
                 {
-                    if (isEligibleForZipPayCredit(customerDetail.MonthlyIncome, customerDetail.MonthlyExpense))
+                    if ( _accountRepository.IsCustomerEligibleForAccount(customerDetail) )
                     {
-                        var accountInfo = await _customerDbContext.Accounts.FindAsync(request.Email);
+                        var accountInfo = _accountRepository.GetAccountByCustomerId(customerDetail.Id);
 
                         if (accountInfo is null)
                         {
@@ -44,11 +47,12 @@ namespace CustomerApi.Service.Handlers.Command
                             newAccount.Active = true;
 
 
-                            _customerDbContext.Accounts.Add(newAccount);
-                            await _customerDbContext.SaveChangesAsync(cancellationToken);
-
-
-                            var customerDto = _customerMap.Map<AccountDto>(newAccount);
+                            _accountRepository.Add(newAccount);
+                            if (await _customerRepository.SaveChangesAsync() == 0)
+                            {
+                                throw new ApplicationException("Unable to save data");
+                            }
+                            var customerDto = _accountMap.Map<AccountDto>(newAccount);
 
                             return customerDto;
                         }
@@ -75,12 +79,6 @@ namespace CustomerApi.Service.Handlers.Command
 
             
             
-        }
-
-        
-        private bool isEligibleForZipPayCredit(uint monthlyIncome, uint monthlyExpense)
-        {
-            return (monthlyIncome - monthlyExpense) >= 1000 ? true : false;
         }
     }
 }

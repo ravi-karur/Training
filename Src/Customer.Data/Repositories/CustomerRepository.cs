@@ -17,7 +17,7 @@ namespace CustomerApi.Data.Repositories
         {
         }
 
-        public Customer GetCustomer(string email)
+        public Customer GetCustomerByEmail(string email)
         {
             var customerDetail = ModelDbSets.AsNoTracking().Where(e => e.Email.Equals(email)).FirstOrDefault();
 
