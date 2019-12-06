@@ -31,29 +31,12 @@ namespace CustomerService.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        public async Task<ActionResult<List<CustomerDto>>> GetAllCustomersAsync()
+        [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status200OK)]        
+        public async Task<ActionResult<List<CustomerDto>>> GetAllAccountsAsync()
         {
-            var customerResults = await QueryAsync(new GetAllCustomersQuery());            
-            return Ok(customerResults);
+            var accountsResults = await QueryAsync(new GetAllAccountsQuery());            
+            return Ok(accountsResults);
         }
-
-        ///// <summary>
-        ///// Get Customer by id
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <returns></returns>
-        //[HttpGet("{id}")]
-        //[ProducesResponseType(typeof(CustomerDto),StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status404NotFound)]
-        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
-        //public async Task<ActionResult<CustomerDto>> GetCustomerAsync(Guid id)
-        //{
-        //    return Single(await QueryAsync(new GetCustomerQuery(id)));            
-        //}
 
 
         /// <summary>
@@ -61,7 +44,8 @@ namespace CustomerService.Controllers
         /// </summary>
         /// <param name="command">Info of customer</param>
         /// <returns></returns>
-        [HttpPost]        
+        [HttpPost]
+        [ProducesResponseType(typeof(CustomerDto), StatusCodes.Status200OK)]
         public async Task<ActionResult> CreateAccountAsync([FromBody] CreateAccountCommand command)
         {
             return Ok(await CommandAsync(command));
