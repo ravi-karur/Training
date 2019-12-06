@@ -7,9 +7,6 @@ using CustomerApi.Domain.Models;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -37,7 +34,7 @@ namespace CustomerApi.Service.Handlers.Command
 
                 if (customerDetail != null)
                 {
-                    if ( _accountRepository.IsCustomerEligibleForAccount(customerDetail) )
+                    if (_accountRepository.IsCustomerEligibleForAccount(customerDetail))
                     {
                         var accountInfo = _accountRepository.GetAccountByCustomerId(customerDetail.Id);
 
@@ -77,8 +74,8 @@ namespace CustomerApi.Service.Handlers.Command
                 throw exception;
             }
 
-            
-            
+
+
         }
     }
 }

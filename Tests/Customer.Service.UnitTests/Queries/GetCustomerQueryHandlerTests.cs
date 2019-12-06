@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CustomerApi.Data.Persistence;
+using CustomerApi.Domain.Common.Exceptions;
 using CustomerApi.Domain.Dtos;
 using CustomerApi.Domain.Queries;
 using CustomerApi.Service.Handlers.Query;
@@ -52,9 +53,9 @@ namespace CustomerApi.Service.UnitTests.Queries
         {
             var sut = new GetCustomerQueryHandler(_logger, _mapper, _context);
 
-            var result = await sut.Handle(new GetCustomerQuery { CustomerId = Guid.Parse("ACA5A84B-CD2C-441B-9795-632FBC0B05FB") }, CancellationToken.None);
+            var exceptionResult = await Assert.ThrowsAsync<NotFoundException>(async () => await sut.Handle(new GetCustomerQuery { CustomerId = Guid.Parse("ACA5A84B-CD2C-441B-9795-632FBC0B05FB") }, CancellationToken.None));
 
-            Assert.Null(result);
+            Assert.Contains("not found", exceptionResult.Message);
 
         }
     }
