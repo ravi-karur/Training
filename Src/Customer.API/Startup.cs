@@ -11,7 +11,7 @@ using CustomerApi.Data.Interfaces;
 using CustomerApi.Data.Repositories;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
-
+using CustomerApi.Domain.Models;
 
 namespace CustomerService
 {
@@ -27,6 +27,14 @@ namespace CustomerService
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<Settings>(options =>
+            {
+                options.ConnectionString
+                    = Configuration.GetSection("MongoConnection:ConnectionString").Value;
+                options.Database
+                    = Configuration.GetSection("MongoConnection:Database").Value;
+            });
+
             services.AddControllers().AddNewtonsoftJson();
             
             services.AddMediatR();            

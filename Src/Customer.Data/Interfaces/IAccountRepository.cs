@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CustomerApi.Data.Interfaces
 {
-    public interface IAccountRepository : IRepository<Account>
+    public interface IAccountRepository 
     {
         public Account GetAccountByCustomerId(Guid customerId);
         public Account GetAccountByEmail(string email);

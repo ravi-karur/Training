@@ -1,6 +1,8 @@
 ﻿using CustomerApi.Data.Interfaces;
 using CustomerApi.Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,29 +11,23 @@ using System.Threading.Tasks;
 
 namespace CustomerApi.Data.Persistence
 {
-    public class CustomerDbContext : DbContext, ICustomerDbContext
+    public class CustomerDbContext
     {
+        private readonly IMongoDatabase _database = null;
 
-        public CustomerDbContext(DbContextOptions<CustomerDbContext> options)
-            : base(options)
+        public CustomerDbContext(IOptions<Settings> settings)
         {
+            var client = new MongoClient(settings.Value.ConnectionString);
+            if (client != null)
+                _database = client.GetDatabase(settings.Value.Database);
         }
 
-        
-
-        public DbSet<Customer> Customers { get; set; }
-
-        public DbSet<Account> Accounts { get; set; }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
-        {   
-            return base.SaveChangesAsync(cancellationToken);
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        public IMongoCollection<Customer> Customers
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(CustomerDbContext).Assembly);
+            get
+            {
+                return _database.GetCollection<Customer>("Customer");
+            }
         }
-
     }
 }
