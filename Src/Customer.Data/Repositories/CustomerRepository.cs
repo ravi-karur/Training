@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Driver;
 
 namespace CustomerApi.Data.Repositories
 {
@@ -25,7 +26,7 @@ namespace CustomerApi.Data.Repositories
 
         public Customer GetCustomerByEmail(string email)
         {
-            var customerDetail = _customerDbContext.Customers.FindSync<Customer>(customer => true).Current
+            var customerDetail = _customerDbContext.Customers.FindSync<Customer>(customer => customer.Email == email).Current
             //var customerDetail = ModelDbSets.AsNoTracking().Where(e => e.Email.Equals(email)).FirstOrDefault();
 
             if ( customerDetail != null)
