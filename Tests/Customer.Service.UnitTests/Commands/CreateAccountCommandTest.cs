@@ -4,6 +4,7 @@ using CustomerApi.Data.Persistence;
 using CustomerApi.Data.Repositories;
 using CustomerApi.Domain.Commands;
 using CustomerApi.Domain.Common.Exceptions;
+using CustomerApi.Domain.Models;
 using CustomerApi.Service.Handlers.Command;
 using CustomerApi.Service.UnitTests.Common;
 using MediatR;
@@ -42,45 +43,35 @@ namespace CustomerApi.Service.UnitTests.Commands
         public async void Handle_GivenValidCustomer_ShouldCreateAccount()
         {
             // Arrange
-            
-            // Create Customer
-            var customerCreation = new CreateCustomerCommandHandler(_customerLogger, _mapper, _customerRepository);
-            var newCustomerCommandRequest = new CreateCustomerCommand { Email = "newcustomerForAccount@new.com.au", MonthlyIncome = 20000, MonthlyExpense = 200 };
-            var customerCreationResult = await customerCreation.Handle(newCustomerCommandRequest, CancellationToken.None);
+            var mockedCustomer1 = new Customer("test1", "test1@test.com.au", 10000, 1000);
+            var mockedAccountRequest = new Account("test1@test.com.au");
 
-            var newAccountCommandRequest = new CreateAccountCommand { Email = customerCreationResult.Email };
+
+            var customerList = new List<Customer>() { mockedCustomer1 };
+            var customerMock = new Mock<ICustomerRepository>();
+            //Mock to return empty customer
+            customerMock.Setup(srv => srv.GetCustomerByEmail(It.IsAny<string>())).ReturnsAsync(mockedCustomer1);
+            customerMock.Setup(srv => srv.IsCustomerEligibleForAccount(It.IsAny<Customer>())).Returns(true);
+
+
+            var accountMock = new Mock<IAccountRepository>();
+            accountMock.Setup(srv => srv.AddAccountAsync(It.IsAny<Account>()));
+
+            var newAccountCommandRequest = new CreateAccountCommand { Email = mockedCustomer1.Email };
 
             // Act
-            var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper,_accountRepository, _customerRepository);
+            var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper,accountMock.Object, customerMock.Object);
 
             var accountCreationResult = await accountCreationSUT.Handle(newAccountCommandRequest, CancellationToken.None);
 
-            var customerFromDb = _customerDbContext.Customers.Find(customerCreationResult.Email);
-            var accountFromDb = _customerDbContext.Accounts.Find(accountCreationResult.AccountNo);
-
             // Assert
-            Assert.NotNull(customerCreationResult);
-            
-            Assert.Equal(newCustomerCommandRequest.Email, customerCreationResult.Email);
-            Assert.Equal(newCustomerCommandRequest.MonthlyExpense, customerCreationResult.MonthlyExpense);
-            Assert.Equal(newCustomerCommandRequest.MonthlyIncome, customerCreationResult.MonthlyIncome);
-
-            Assert.NotNull(customerFromDb);
-            
-            Assert.Equal(newCustomerCommandRequest.Email, customerFromDb.Email);
-            Assert.Equal(newCustomerCommandRequest.MonthlyExpense, customerFromDb.MonthlyExpense);
-            Assert.Equal(newCustomerCommandRequest.MonthlyIncome, customerFromDb.MonthlyIncome);
-
-
             Assert.NotNull(accountCreationResult);
-            
-            Assert.Equal(customerCreationResult.Email, accountCreationResult.Email);
-            Assert.True(accountFromDb.Active);
+            Assert.True(accountCreationResult.AccountNo > 0);
+            Assert.Equal(accountCreationResult.Email, mockedCustomer1.Email);
 
-            Assert.NotNull(accountFromDb);
-            
-            Assert.Equal(accountCreationResult.Email, accountFromDb.Email);
-            
+            customerMock.Verify(rep => rep.GetCustomerByEmail(mockedCustomer1.Email), Times.Once);
+            customerMock.Verify(rep => rep.IsCustomerEligibleForAccount(mockedCustomer1), Times.Once);
+            accountMock.Verify(rep => rep.AddAccountAsync(It.IsAny<Account>()), Times.Once);
 
         }
 
@@ -88,23 +79,33 @@ namespace CustomerApi.Service.UnitTests.Commands
         public async void Handle_GivenCustomerNotExist_ShouldThrowNotFoundException()
         {
             // Arrange
+            var mockedCustomer1 = new Customer("test1", "test1@test.com.au", 10000, 1000);
+            var mockedAccountRequest = new Account("test2@test.com.au");
 
-            // Create Customer           
 
-            var notCustomerEmail = "notacustomer@test.com.au";
+            var customerList = new List<Customer>() { mockedCustomer1 };
+            var customerMock = new Mock<ICustomerRepository>();
+            //Mock to return empty customer
+            customerMock.Setup(srv => srv.GetCustomerByEmail(It.IsAny<string>()));
+            customerMock.Setup(srv => srv.IsCustomerEligibleForAccount(It.IsAny<Customer>())).Returns(true);
 
-            var newAccountCommandRequest = new CreateAccountCommand { Email = notCustomerEmail};
+
+            var accountMock = new Mock<IAccountRepository>();
+            accountMock.Setup(srv => srv.AddAccountAsync(It.IsAny<Account>()));
+
+            var newAccountCommandRequest = new CreateAccountCommand { Email = mockedCustomer1.Email };
 
             // Act
-            var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper, _accountRepository, _customerRepository);
+            var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper, accountMock.Object, customerMock.Object);
 
             var accountCreationExceptionResult = await Assert.ThrowsAsync<NotFoundException>(async () => await accountCreationSUT.Handle(newAccountCommandRequest, CancellationToken.None));
 
-            var accountFromDb = _accountRepository.GetAccountByEmail(notCustomerEmail);
-            
+
             // Assert
-            Assert.Null(accountFromDb);
-            
+            Assert.NotNull(accountCreationExceptionResult);            
+            customerMock.Verify(rep => rep.GetCustomerByEmail(mockedCustomer1.Email), Times.Once);
+            customerMock.Verify(rep => rep.IsCustomerEligibleForAccount(mockedCustomer1), Times.Never);
+            accountMock.Verify(rep => rep.AddAccountAsync(It.IsAny<Account>()), Times.Never);
 
         }
 
@@ -112,23 +113,33 @@ namespace CustomerApi.Service.UnitTests.Commands
         public async void Handle_GivenCustomerWithInSufficientBalance_ShouldThrowBadRequest()
         {
             // Arrange
+            var mockedCustomer1 = new Customer("test1", "test1@test.com.au", 10000, 9500);
+            var mockedAccountRequest = new Account("test1@test.com.au");
 
-            // Create Customer
-            var customerCreation = new CreateCustomerCommandHandler(_customerLogger, _mapper, _customerRepository);
-            var newCustomerCommandRequest = new CreateCustomerCommand { Email = "customerwithlessthan1000@test.com.au", MonthlyIncome = 2000, MonthlyExpense = 1200 };
-            var customerCreationResult = await customerCreation.Handle(newCustomerCommandRequest, CancellationToken.None);
 
-            var newAccountCommandRequest = new CreateAccountCommand { Email = customerCreationResult.Email };
+            var customerList = new List<Customer>() { mockedCustomer1 };
+            var customerMock = new Mock<ICustomerRepository>();
+            //Mock to return empty customer
+            customerMock.Setup(srv => srv.GetCustomerByEmail(It.IsAny<string>())).ReturnsAsync(mockedCustomer1);
+            customerMock.Setup(srv => srv.IsCustomerEligibleForAccount(It.IsAny<Customer>())).Returns(false);
+
+
+            var accountMock = new Mock<IAccountRepository>();
+            accountMock.Setup(srv => srv.AddAccountAsync(It.IsAny<Account>()));
+
+            var newAccountCommandRequest = new CreateAccountCommand { Email = mockedCustomer1.Email };
 
             // Act
-            var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper, _accountRepository, _customerRepository);
+            var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper, accountMock.Object, customerMock.Object);
 
             var accountCreationExceptionResult = await Assert.ThrowsAsync<BadRequestException>(async () => await accountCreationSUT.Handle(newAccountCommandRequest, CancellationToken.None));
-
-            var accountFromDb = _accountRepository.GetAccountByEmail(customerCreationResult.Email);
+            
 
             // Assert
-            Assert.Null(accountFromDb);
+            Assert.NotNull(accountCreationExceptionResult);
+            customerMock.Verify(rep => rep.GetCustomerByEmail(mockedCustomer1.Email), Times.Once);
+            customerMock.Verify(rep => rep.IsCustomerEligibleForAccount(mockedCustomer1), Times.Once);
+            accountMock.Verify(rep => rep.AddAccountAsync(It.IsAny<Account>()), Times.Never); ;
 
 
         }

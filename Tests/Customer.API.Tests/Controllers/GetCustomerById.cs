@@ -14,6 +14,7 @@ using Xunit;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using CustomerApi.Data.Persistence;
+using CustomerApi.Domain.Common.Exceptions;
 
 namespace CustomerApi.API.Tests.Controllers
 {
@@ -35,9 +36,9 @@ namespace CustomerApi.API.Tests.Controllers
 
             var controller = new CustomerController(_logger.Object, _mediator.Object);
 
-            var result = await controller.GetCustomerAsync("test@test.com.au");
-
-            Assert.Null(result);
+            var result = await controller.GetCustomerAsync("unknown@test.com.au");
+            
+            Assert.NotNull(result);
         }
     }
 }
