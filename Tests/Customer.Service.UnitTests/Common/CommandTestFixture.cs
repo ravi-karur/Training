@@ -11,7 +11,7 @@ namespace CustomerApi.Service.UnitTests.Common
 {
     public class CommandTestFixture : IDisposable
     {
-        public CustomerDbContext Context { get; private set; }
+        public DbContext Context { get; private set; }
         public IMapper Mapper { get; private set; }
 
         public ILogger Logger { get; private set; }

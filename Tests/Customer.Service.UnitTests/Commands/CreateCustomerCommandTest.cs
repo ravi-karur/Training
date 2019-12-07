@@ -27,10 +27,10 @@ namespace CustomerApi.Service.UnitTests.Commands
 
         public CreateCustomerCommandTest(CommandTestFixture fixture)
         {
-            _customerDbContext = fixture.Context;
+            _customerDbContext = null; //fixture.Context;
             _mapper = fixture.Mapper;
             _logger = Mock.Of<ILogger<CreateCustomerCommandHandler>>();
-            _customerRepository = new CustomerRepository(fixture.Context);
+            _customerRepository = null; // new CustomerRepository(fixture.Context);
 
         }
 
@@ -46,17 +46,17 @@ namespace CustomerApi.Service.UnitTests.Commands
             // Act
             var result = await sut.Handle(newCustomerCommandRequest, CancellationToken.None);
 
-            var customerFromDb = _customerDbContext.Customers.Find(result.Id);
+            var customerFromDb = _customerDbContext.Customers.Find(result.Email);
 
             // Assert
             Assert.NotNull(result);
-            Assert.IsType<Guid>(result.Id);
+            
             Assert.Equal(newCustomerCommandRequest.Email, result.Email);
             Assert.Equal(newCustomerCommandRequest.MonthlyExpense, result.MonthlyExpense);
             Assert.Equal(newCustomerCommandRequest.MonthlyIncome, result.MonthlyIncome);
 
             Assert.NotNull(customerFromDb);
-            Assert.Equal(result.Id, customerFromDb.Id);
+            
             Assert.Equal(newCustomerCommandRequest.Email, customerFromDb.Email);
             Assert.Equal(newCustomerCommandRequest.MonthlyExpense, customerFromDb.MonthlyExpense);
             Assert.Equal(newCustomerCommandRequest.MonthlyIncome, customerFromDb.MonthlyIncome);

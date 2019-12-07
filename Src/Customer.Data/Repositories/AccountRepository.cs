@@ -2,13 +2,14 @@
 using CustomerApi.Data.Persistence;
 using CustomerApi.Domain.Common.Exceptions;
 using CustomerApi.Domain.Models;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Driver;
+using MongoDB.Driver.Linq;
 
 namespace CustomerApi.Data.Repositories
 {
@@ -16,27 +17,26 @@ namespace CustomerApi.Data.Repositories
     {
         private const int CREDITLIMIT = 1000;
 
-        private readonly CustomerDbContext _customerDbContext = null;
+        private readonly Persistence.DbContext _accountDbContext = null;
 
         public AccountRepository(IOptions<Settings> settings)
         {
-            _customerDbContext = new CustomerDbContext(settings);
+            _accountDbContext = new Persistence.DbContext(settings);
         }
 
-        public Account GetAccountByCustomerId(Guid customerId)
+        public async Task AddAccountAsync(Account account)
         {
-            return _customerDbContext.Customers.FindSync<Customer>(a => a. == customerId);
+           await _accountDbContext.Accounts.InsertOneAsync(account);
         }
 
-        public Account GetAccountByEmail(string email)
+        public async Task<Account> GetAccountByEmail(string email)
         {
-            return _customerDbContext.Accounts.Where(a => a.Email == email).FirstOrDefault();
+            return await _accountDbContext.Accounts.AsQueryable().FirstOrDefaultAsync(a => a.Email == email.ToLower());  
         }
 
-        public bool IsCustomerEligibleForAccount(Customer customer)
+        public async Task<List<Account>> GetAllAccounts()
         {
-            
-            return (customer.MonthlyIncome - customer.MonthlyExpense) >= CREDITLIMIT ? true : false;
+            return await _accountDbContext.Accounts.AsQueryable().ToListAsync();
         }
     }
 }

@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using CustomerApi.Data.Interfaces;
 using CustomerApi.Data.Persistence;
 using CustomerApi.Domain.Common.Exceptions;
 using CustomerApi.Domain.Dtos;
+using CustomerApi.Domain.Models;
 using CustomerApi.Domain.Queries;
 using CustomerApi.Service.Handlers.Query;
 using CustomerApi.Service.UnitTests.Common;
@@ -19,9 +21,10 @@ namespace CustomerApi.Service.UnitTests.Queries
     [Collection("QueryCollection")]
     public class GetCustomerQueryHandlerTests
     {
-        private readonly CustomerDbContext _context;
+        private readonly DbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<GetCustomerQueryHandler> _logger;
+        private readonly ICustomerRepository _customerRepository;
 
 
         public GetCustomerQueryHandlerTests(QueryTestFixture fixture)
@@ -29,31 +32,33 @@ namespace CustomerApi.Service.UnitTests.Queries
             _context = fixture.Context;
             _mapper = fixture.Mapper;
             _logger = Mock.Of<ILogger<GetCustomerQueryHandler>>();
-
         }
 
         [Fact]
         public async Task GetCustomerDetailExists()
         {
-            var sut = new GetCustomerQueryHandler(_logger,_mapper,_context);
+            var email = "test@test.com.au";
+            var mock = new Mock<ICustomerRepository>();
+            mock.Setup(srv => srv.GetCustomerByEmail(It.IsAny<string>())).ReturnsAsync(new Customer("Test1", email, 0, 0));
 
-            var result = await sut.Handle(new GetCustomerQuery { CustomerId = Guid.Parse("ACA5A74B-CD2C-441B-9795-632FBC0B05FB") }, CancellationToken.None);
+            var sut = new GetCustomerQueryHandler(_logger, _mapper, mock.Object);
 
-            Assert.IsType<CustomerDto>(result);
-            Assert.Equal(Guid.Parse("ACA5A74B-CD2C-441B-9795-632FBC0B05FB"), result.Id);
+            var result = await sut.Handle(new GetCustomerQuery { Email = email }, CancellationToken.None);
+
+            Assert.IsType<CustomerDto>(result);   
+            
             Assert.Equal("Test1", result.Name);
-            Assert.Equal("Test1@test.com.au", result.Email);
-            Assert.Equal(10000M, result.MonthlyIncome);
-            Assert.Equal(1000M, result.MonthlyExpense);
+            Assert.Equal(email, result.Email);
 
+            mock.Verify(rep => rep.GetCustomerByEmail(email), Times.Once);
         }
 
         [Fact]
         public async Task GetCustomerDetailNotFound()
         {
-            var sut = new GetCustomerQueryHandler(_logger, _mapper, _context);
+            var sut = new GetCustomerQueryHandler(_logger, _mapper, null);
 
-            var exceptionResult = await Assert.ThrowsAsync<NotFoundException>(async () => await sut.Handle(new GetCustomerQuery { CustomerId = Guid.Parse("ACA5A84B-CD2C-441B-9795-632FBC0B05FB") }, CancellationToken.None));
+            var exceptionResult = await Assert.ThrowsAsync<NotFoundException>(async () => await sut.Handle(new GetCustomerQuery { Email = "test@test.com.au" }, CancellationToken.None));
 
             Assert.Contains("not found", exceptionResult.Message);
 

@@ -19,8 +19,6 @@ namespace CustomerApi.Data.EntityConfigurations
 
             builder.Property(b => b.Email).HasColumnName("email").HasMaxLength(50).IsRequired();
 
-            builder.Property(e => e.CustomerId).HasColumnName("CustomerId").IsRequired();
-
             builder.Property(e => e.Active).HasColumnName("IsActive").IsRequired();
             
         }

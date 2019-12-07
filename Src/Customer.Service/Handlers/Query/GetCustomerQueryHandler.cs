@@ -16,28 +16,28 @@ namespace CustomerApi.Service.Handlers.Query
 {
     public class GetCustomerQueryHandler : IRequestHandler<GetCustomerQuery, CustomerDto> 
     {
-        private readonly ICustomerDbContext _customerDbContext;
+        private readonly ICustomerRepository _repository;
         private readonly IMapper _customerMap;
         private readonly ILogger _logger;
 
-        public GetCustomerQueryHandler(ILogger<GetCustomerQueryHandler> logger,IMapper customerMap,ICustomerDbContext customerDbContext)
+        public GetCustomerQueryHandler(ILogger<GetCustomerQueryHandler> logger,IMapper customerMap,ICustomerRepository repository)
         {
             _logger = logger;
             _customerMap = customerMap;
-            _customerDbContext = customerDbContext;
+            _repository = repository;
         }
         public async Task<CustomerDto> Handle(GetCustomerQuery request, CancellationToken cancellationToken)
         {
-            var customerInfo = await _customerDbContext.Customers.FindAsync(request.CustomerId);
+            var customerInfo = await _repository.GetCustomerByEmail(request.Email);
 
             if (customerInfo != null)
             {
-                _logger.LogInformation($"Got a request get customer Id: {request.CustomerId}");
+                _logger.LogInformation($"Got a request get customer Id: {request.Email}");
                 return _customerMap.Map<CustomerDto>(customerInfo);
             }
 
             //return null;  
-            throw new NotFoundException($"Customer with {request.CustomerId} was not found");
+            throw new NotFoundException($"Customer with {request.Email} was not found");
             
         }
     }

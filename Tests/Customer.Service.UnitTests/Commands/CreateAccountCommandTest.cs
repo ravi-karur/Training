@@ -29,12 +29,12 @@ namespace CustomerApi.Service.UnitTests.Commands
 
         public CreateAccountCommandTest(CommandTestFixture fixture)
         {
-            _customerDbContext = fixture.Context;
+            _customerDbContext = null;
             _mapper = fixture.Mapper;
             _customerLogger = Mock.Of<ILogger<CreateCustomerCommandHandler>>();
             _accountLogger = Mock.Of<ILogger<CreateAccountCommandHandler>>();
-            _customerRepository = new CustomerRepository(fixture.Context);
-            _accountRepository = new AccountRepository(fixture.Context);
+            _customerRepository = null; //new CustomerRepository(fixture.Context);
+            _accountRepository = null; //AccountRepository(fixture.Context);
 
         }
 
@@ -48,37 +48,37 @@ namespace CustomerApi.Service.UnitTests.Commands
             var newCustomerCommandRequest = new CreateCustomerCommand { Email = "newcustomerForAccount@new.com.au", MonthlyIncome = 20000, MonthlyExpense = 200 };
             var customerCreationResult = await customerCreation.Handle(newCustomerCommandRequest, CancellationToken.None);
 
-            var newAccountCommandRequest = new CreateAccountCommand { Email = customerCreationResult.Email, customerId = customerCreationResult.Id };
+            var newAccountCommandRequest = new CreateAccountCommand { Email = customerCreationResult.Email };
 
             // Act
             var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper,_accountRepository, _customerRepository);
 
             var accountCreationResult = await accountCreationSUT.Handle(newAccountCommandRequest, CancellationToken.None);
 
-            var customerFromDb = _customerDbContext.Customers.Find(customerCreationResult.Id);
+            var customerFromDb = _customerDbContext.Customers.Find(customerCreationResult.Email);
             var accountFromDb = _customerDbContext.Accounts.Find(accountCreationResult.AccountNo);
 
             // Assert
             Assert.NotNull(customerCreationResult);
-            Assert.IsType<Guid>(customerCreationResult.Id);
+            
             Assert.Equal(newCustomerCommandRequest.Email, customerCreationResult.Email);
             Assert.Equal(newCustomerCommandRequest.MonthlyExpense, customerCreationResult.MonthlyExpense);
             Assert.Equal(newCustomerCommandRequest.MonthlyIncome, customerCreationResult.MonthlyIncome);
 
             Assert.NotNull(customerFromDb);
-            Assert.Equal(customerCreationResult.Id, customerFromDb.Id);
+            
             Assert.Equal(newCustomerCommandRequest.Email, customerFromDb.Email);
             Assert.Equal(newCustomerCommandRequest.MonthlyExpense, customerFromDb.MonthlyExpense);
             Assert.Equal(newCustomerCommandRequest.MonthlyIncome, customerFromDb.MonthlyIncome);
 
 
             Assert.NotNull(accountCreationResult);
-            Assert.Equal(customerCreationResult.Id,accountCreationResult.customerId);
+            
             Assert.Equal(customerCreationResult.Email, accountCreationResult.Email);
             Assert.True(accountFromDb.Active);
 
             Assert.NotNull(accountFromDb);
-            Assert.Equal(accountCreationResult.customerId, accountFromDb.CustomerId);
+            
             Assert.Equal(accountCreationResult.Email, accountFromDb.Email);
             
 
@@ -93,7 +93,7 @@ namespace CustomerApi.Service.UnitTests.Commands
 
             var notCustomerEmail = "notacustomer@test.com.au";
 
-            var newAccountCommandRequest = new CreateAccountCommand { Email = notCustomerEmail, customerId = Guid.NewGuid() };
+            var newAccountCommandRequest = new CreateAccountCommand { Email = notCustomerEmail};
 
             // Act
             var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper, _accountRepository, _customerRepository);
@@ -118,7 +118,7 @@ namespace CustomerApi.Service.UnitTests.Commands
             var newCustomerCommandRequest = new CreateCustomerCommand { Email = "customerwithlessthan1000@test.com.au", MonthlyIncome = 2000, MonthlyExpense = 1200 };
             var customerCreationResult = await customerCreation.Handle(newCustomerCommandRequest, CancellationToken.None);
 
-            var newAccountCommandRequest = new CreateAccountCommand { Email = customerCreationResult.Email, customerId = customerCreationResult.Id };
+            var newAccountCommandRequest = new CreateAccountCommand { Email = customerCreationResult.Email };
 
             // Act
             var accountCreationSUT = new CreateAccountCommandHandler(_accountLogger, _mapper, _accountRepository, _customerRepository);

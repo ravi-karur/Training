@@ -15,13 +15,13 @@ namespace CustomerApi.Domain.Queries
         }
 
         [JsonConstructor]
-        public GetCustomerQuery(Guid customerId)
+        public GetCustomerQuery(string email)
         {
-            CustomerId = customerId;
+            Email = email;
         }
 
-        [JsonProperty("id")]
+        [JsonProperty("email")]
         [Required]
-        public Guid CustomerId { get; set; }
+        public string Email { get; set; }
     }
 }

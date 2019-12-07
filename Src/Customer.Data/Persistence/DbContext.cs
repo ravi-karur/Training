@@ -11,11 +11,11 @@ using System.Threading.Tasks;
 
 namespace CustomerApi.Data.Persistence
 {
-    public class CustomerDbContext
+    public class DbContext
     {
         private readonly IMongoDatabase _database = null;
 
-        public CustomerDbContext(IOptions<Settings> settings)
+        public DbContext(IOptions<Settings> settings)
         {
             var client = new MongoClient(settings.Value.ConnectionString);
             if (client != null)
@@ -26,7 +26,15 @@ namespace CustomerApi.Data.Persistence
         {
             get
             {
-                return _database.GetCollection<Customer>("Customer");
+                return _database.GetCollection<Customer>("Customers");
+            }
+        }
+
+        public IMongoCollection<Account> Accounts
+        {
+            get
+            {
+                return _database.GetCollection<Account>("Accounts");
             }
         }
     }

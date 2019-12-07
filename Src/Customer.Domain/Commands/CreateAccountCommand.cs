@@ -30,10 +30,6 @@ namespace CustomerApi.Domain.Commands
         [JsonProperty("accountNo")]
         public long AccountNo { get; set; }
 
-        [JsonProperty("customerId")]
-        public Guid customerId { get; set; }
-
-        
 
     }
 }

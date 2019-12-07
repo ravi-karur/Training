@@ -13,8 +13,6 @@ namespace CustomerApi.Data.EntityConfigurations
         {
             builder.ToTable("customer");
 
-            builder.HasKey(b => b.Id);
-            builder.Property(b => b.Id).HasColumnName("id").HasDefaultValueSql("newId()");
 
             builder.Property(b => b.Name).HasColumnName("name").HasMaxLength(50)
                 .IsRequired();

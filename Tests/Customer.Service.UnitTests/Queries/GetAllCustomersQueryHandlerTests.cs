@@ -19,7 +19,7 @@ namespace CustomerApi.Service.UnitTests.Queries
     [Collection("QueryCollection")]
     public class GetAllCustomersQueryHandlerTests
     {
-        private readonly CustomerDbContext _context;
+        private readonly DbContext _context;
         private readonly IMapper _mapper;
         private readonly ILogger<GetAllCustomersQueryHandler> _logger;
 
@@ -35,7 +35,7 @@ namespace CustomerApi.Service.UnitTests.Queries
         [Fact]
         public async Task GetAllCustomerDetailTests()
         {
-            var sut = new GetAllCustomersQueryHandler(_logger, _mapper, _context);
+            var sut = new GetAllCustomersQueryHandler(_logger, _mapper, null);
 
             var result = await sut.Handle(null, CancellationToken.None);
 

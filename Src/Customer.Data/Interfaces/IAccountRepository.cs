@@ -8,9 +8,11 @@ namespace CustomerApi.Data.Interfaces
 {
     public interface IAccountRepository 
     {
-        public Account GetAccountByCustomerId(Guid customerId);
-        public Account GetAccountByEmail(string email);
+        public Task AddAccountAsync(Account customer);
+        
+        public Task<List<Account>> GetAllAccounts();
 
-        public bool IsCustomerEligibleForAccount(Customer customer);
+        public Task<Account> GetAccountByEmail(string email);
+
     }
 }

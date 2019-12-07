@@ -12,6 +12,7 @@ using CustomerApi.Data.Repositories;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 using CustomerApi.Domain.Models;
+using CustomerApi.API.Common;
 
 namespace CustomerService
 {
@@ -70,6 +71,8 @@ namespace CustomerService
             });
 
             app.UseRouting();
+
+            app.UseCustomExceptionHandler();
 
             app.UseAuthorization();
 

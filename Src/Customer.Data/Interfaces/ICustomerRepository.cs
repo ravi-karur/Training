@@ -8,12 +8,10 @@ namespace CustomerApi.Data.Interfaces
 {
     public interface ICustomerRepository 
     {
-        Task<bool> EmailExistAsync(string email);
+        public Task AddCustomerAsync(Customer customer); 
+        public Task<Customer> GetCustomerByEmail(string email);
 
-        public Customer GetCustomerByEmail(string email);
-
-        public Account GetAccountByCustomerId(Guid customerId);
-        public Account GetAccountByEmail(string email);
+        public Task<List<Customer>> GetAllCustomers();
 
         public bool IsCustomerEligibleForAccount(Customer customer);
     }

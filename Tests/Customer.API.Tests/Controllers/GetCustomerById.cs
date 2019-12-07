@@ -35,9 +35,7 @@ namespace CustomerApi.API.Tests.Controllers
 
             var controller = new CustomerController(_logger.Object, _mediator.Object);
 
-            var customerIdtoBeSearched = Guid.Parse("ACA5A74B-CD2C-441B-9795-632FBC0B05FB");
-
-            var result = await controller.GetCustomerAsync(customerIdtoBeSearched);
+            var result = await controller.GetCustomerAsync("test@test.com.au");
 
             Assert.Null(result);
         }

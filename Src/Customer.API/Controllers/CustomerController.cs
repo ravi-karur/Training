@@ -46,13 +46,13 @@ namespace CustomerService.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{email}")]
         [ProducesResponseType(typeof(CustomerDto),StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<CustomerDto>> GetCustomerAsync(Guid id)
+        public async Task<ActionResult<CustomerDto>> GetCustomerAsync(string email)
         {
-            return Single(await QueryAsync(new GetCustomerQuery(id)));            
+            return Single(await QueryAsync(new GetCustomerQuery(email)));            
         }
 
 
