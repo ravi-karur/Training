@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using CustomerApi.Data.Interfaces;
 using CustomerApi.Domain.Dtos;
-using CustomerApi.Domain.Models;
 using CustomerApi.Domain.Queries;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;

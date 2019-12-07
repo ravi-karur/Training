@@ -1,12 +1,8 @@
 ﻿using AutoMapper;
 using CustomerApi.Data.Persistence;
 using CustomerApi.Service.Mappers;
-using MediatR;
 using Microsoft.Extensions.Logging;
-using Moq;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace CustomerApi.Service.UnitTests.Common

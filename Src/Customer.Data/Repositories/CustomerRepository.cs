@@ -1,15 +1,12 @@
 ﻿using CustomerApi.Data.Interfaces;
 using CustomerApi.Data.Persistence;
-using CustomerApi.Domain.Common.Exceptions;
 using CustomerApi.Domain.Models;
 using Microsoft.Extensions.Options;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace CustomerApi.Data.Repositories
 {

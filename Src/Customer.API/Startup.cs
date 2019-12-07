@@ -1,3 +1,8 @@
+using CustomerApi.API.Common;
+using CustomerApi.Data;
+using CustomerApi.Data.Interfaces;
+using CustomerApi.Data.Repositories;
+using CustomerApi.Domain.Models;
 using CustomerApi.Service;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
@@ -6,13 +11,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using CustomerApi.Data;
-using CustomerApi.Data.Interfaces;
-using CustomerApi.Data.Repositories;
-using Newtonsoft.Json;
-using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
-using CustomerApi.Domain.Models;
-using CustomerApi.API.Common;
 
 namespace CustomerService
 {

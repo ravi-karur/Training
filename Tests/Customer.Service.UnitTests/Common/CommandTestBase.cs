@@ -1,5 +1,5 @@
-using System;
 using CustomerApi.Data.Persistence;
+using System;
 
 namespace CustomerApi.Service.UnitTests.Common
 {

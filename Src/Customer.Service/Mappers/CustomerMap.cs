@@ -1,9 +1,6 @@
 ﻿using AutoMapper;
 using CustomerApi.Domain.Dtos;
 using CustomerApi.Domain.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace CustomerApi.Service.Mappers
 {

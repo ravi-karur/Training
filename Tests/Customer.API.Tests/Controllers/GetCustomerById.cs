@@ -1,20 +1,11 @@
 ﻿using CustomerApi.API.Tests.Common;
-using CustomerApi.Domain.Dtos;
 using CustomerService;
 using CustomerService.Controllers;
 using MediatR;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using CustomerApi.Data.Persistence;
-using CustomerApi.Domain.Common.Exceptions;
 
 namespace CustomerApi.API.Tests.Controllers
 {

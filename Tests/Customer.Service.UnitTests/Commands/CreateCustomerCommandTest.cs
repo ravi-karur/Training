@@ -1,20 +1,14 @@
 ﻿using AutoMapper;
 using CustomerApi.Data.Interfaces;
-using CustomerApi.Data.Persistence;
-using CustomerApi.Data.Repositories;
 using CustomerApi.Domain.Commands;
 using CustomerApi.Domain.Common.Exceptions;
 using CustomerApi.Domain.Models;
 using CustomerApi.Service.Handlers.Command;
 using CustomerApi.Service.UnitTests.Common;
-using MediatR;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace CustomerApi.Service.UnitTests.Commands

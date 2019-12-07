@@ -1,7 +1,4 @@
-﻿using CustomerApi.Data.Interfaces;
-using CustomerApi.Data.Persistence;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomerApi.Data

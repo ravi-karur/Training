@@ -3,8 +3,6 @@ using CustomerApi.Data.Persistence;
 using CustomerApi.Service.Mappers;
 using Microsoft.Extensions.Logging;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using Xunit;
 
 namespace CustomerApi.Service.UnitTests.Common

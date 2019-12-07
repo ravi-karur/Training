@@ -1,11 +1,4 @@
-﻿using CustomerApi.Data.Persistence;
-using CustomerApi.Domain.Models;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CustomerApi.Service.UnitTests.Common
+﻿namespace CustomerApi.Service.UnitTests.Common
 {
     public class CustomerContextFactory
     {
